@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout
 
 from . import LoginWindow

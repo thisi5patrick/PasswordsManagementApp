@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from PyQt5.QtWidgets import QLineEdit, QLabel, QFormLayout, QPushButton, QWidget
 
 
@@ -39,6 +41,7 @@ class LoginWindow(QWidget):
         """
         Function to check entered credentials
         """
+        # TODO create class to check credentials
         print(self.login_input.text())
 
     def registerUser(self):

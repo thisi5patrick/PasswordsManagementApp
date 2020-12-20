@@ -1,27 +1,35 @@
+from __future__ import annotations
+
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QFormLayout, QPushButton
 from PyQt5.QtGui import QValidator
+
+from .register_user import RegisterUser
 
 
 class RegisterWindow(QWidget):
     def __init__(self, parent):
         super(RegisterWindow, self).__init__(parent)
+        self._password = None
+        self._login = None
         self.parent = parent
 
         self.wrong_password = QLabel()
 
         self.new_login_label = QLabel('&Enter your new login: ')
-        self.new_login_input = QLineEdit()
-        self.new_login_label.setBuddy(self.new_login_input)
+        self._new_login_input = QLineEdit()
+        self.new_login_label.setBuddy(self._new_login_input)
+
+        self.info_about_password = QLabel('&Your password should ')
 
         self.new_password_label = QLabel('&Enter your password: ')
-        self.new_password_input = QLineEdit()
-        self.new_password_input.setEchoMode(QLineEdit.Password)
-        self.new_password_label.setBuddy(self.new_password_input)
+        self._new_password_input = QLineEdit()
+        self._new_password_input.setEchoMode(QLineEdit.Password)
+        self.new_password_label.setBuddy(self._new_password_input)
 
         self.new_password_repeat_label = QLabel('&Enter your password: ')
-        self.new_password_repeat_input = QLineEdit()
-        self.new_password_repeat_input.setEchoMode(QLineEdit.Password)
-        self.new_password_repeat_label.setBuddy(self.new_password_repeat_input)
+        self._new_password_repeat_input = QLineEdit()
+        self._new_password_repeat_input.setEchoMode(QLineEdit.Password)
+        self.new_password_repeat_label.setBuddy(self._new_password_repeat_input)
 
         buttonNext = QPushButton('Create new account')
 
@@ -29,11 +37,11 @@ class RegisterWindow(QWidget):
 
         self.layout = QFormLayout()
         self.layout.addWidget(self.new_login_label)
-        self.layout.addWidget(self.new_login_input)
+        self.layout.addWidget(self._new_login_input)
         self.layout.addWidget(self.new_password_label)
-        self.layout.addWidget(self.new_password_input)
+        self.layout.addWidget(self._new_password_input)
         self.layout.addWidget(self.new_password_repeat_label)
-        self.layout.addWidget(self.new_password_repeat_input)
+        self.layout.addWidget(self._new_password_repeat_input)
         self.layout.addWidget(self.wrong_password)
         self.layout.addWidget(buttonNext)
         self.setLayout(self.layout)
@@ -43,16 +51,16 @@ class RegisterWindow(QWidget):
         Validate if passwords are the same
         :return: True if passwords match each other
         """
-        if self.new_password_input.text() == self.new_password_repeat_input.text():
-            return True
-        else:
-            return False
+        return self._new_password_input.text() == self._new_password_repeat_input.text()
 
     def createNewAccount(self) -> None:
         """
         Create account based on credentials provided
         """
+        self._password = self._new_password_input.text()
+        self._login = self._new_login_input.text()
         if self.validatePassword():
+            RegisterUser(self._login, self._password).addUserToFile()
             self.parent.stacked_widget.setCurrentIndex(self.parent.stacked_widget.currentIndex() - 1)
         else:
             self.wrong_password.setText('Passwords does not match!')
