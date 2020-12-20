@@ -2,10 +2,14 @@ from __future__ import annotations
 
 from PyQt5.QtWidgets import QLineEdit, QLabel, QFormLayout, QPushButton, QWidget
 
+from .fernet_handler import FernetKeyHandler
+
 
 class LoginWindow(QWidget):
     def __init__(self, parent=None):
         super(LoginWindow, self).__init__(parent)
+        fernet_key_handler = FernetKeyHandler()
+        self._key = fernet_key_handler()
         self.parent = parent
         self.setStyleSheet('''
             QLabel { font-size: 12px; margin-top: 40px }
