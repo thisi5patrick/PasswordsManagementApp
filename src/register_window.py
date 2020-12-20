@@ -13,7 +13,7 @@ class RegisterWindow(QWidget):
         self._login = None
         self.parent = parent
 
-        self.wrong_password = QLabel()
+        self.info_label = QLabel()
 
         self.new_login_label = QLabel('&Enter your new login: ')
         self._new_login_input = QLineEdit()
@@ -42,7 +42,7 @@ class RegisterWindow(QWidget):
         self.layout.addWidget(self._new_password_input)
         self.layout.addWidget(self.new_password_repeat_label)
         self.layout.addWidget(self._new_password_repeat_input)
-        self.layout.addWidget(self.wrong_password)
+        self.layout.addWidget(self.info_label)
         self.layout.addWidget(buttonNext)
         self.setLayout(self.layout)
 
@@ -60,8 +60,17 @@ class RegisterWindow(QWidget):
         self._password = self._new_password_input.text()
         self._login = self._new_login_input.text()
         if self.validatePassword():
-            RegisterUser(self._login, self._password).addUserToFile()
-            self.parent.stacked_widget.setCurrentIndex(self.parent.stacked_widget.currentIndex() - 1)
+            ru = RegisterUser(self._login, self._password)
+            if not ru.checkUserExistence():
+                ru.addUserToFile()
+                self._new_login_input.clear()
+                self._new_password_input.clear()
+                self._new_password_repeat_input.clear()
+                self.parent.stacked_widget.setCurrentIndex(self.parent.stacked_widget.currentIndex() - 1)
+            else:
+                self.info_label.setText('User already exists')
+                self.info_label.setStyleSheet('color: red; font-size: 12px;')
+
         else:
-            self.wrong_password.setText('Passwords does not match!')
-            self.wrong_password.setStyleSheet('color: red; font-size: 12px;')
+            self.info_label.setText('Passwords does not match!')
+            self.info_label.setStyleSheet('color: red; font-size: 12px;')

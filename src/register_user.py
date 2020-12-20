@@ -6,9 +6,24 @@ class RegisterUser:
         self._login = login
         self._password = password
 
-    # TODO check if user exists
-    # TODO check if file 'users.txt' exists
-    def addUserToFile(self):
-        f = open('src/data/users.txt', 'a')
-        f.write(f'{self._login},{self._password}')
-        f.close()
+    def checkUserExistence(self) -> bool:
+        """
+        Check if user exists in file with users.
+        """
+        user_exists = False
+        try:
+            with open('src/data/users.txt', 'r') as file:
+                for line in file:
+                    if line == f'{self._login},{self._password}':
+                        user_exists = True
+            return user_exists
+
+        except FileNotFoundError:
+            return user_exists
+
+    def addUserToFile(self) -> None:
+        """
+        Add users credentials to file.
+        """
+        with open('src/data/users.txt', 'a') as file:
+            file.write(f'{self._login},{self._password}\n')
