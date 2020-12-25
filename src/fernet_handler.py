@@ -26,7 +26,6 @@ class FernetKeyHandler:
         Check if Fernet Key is generated.
         If it is, then read it from file, else generate key.
         """
-        key = None
         try:
             with open('src/data/fernet_key.txt', 'br+') as f:
                 FernetKey = f.readline()

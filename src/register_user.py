@@ -5,8 +5,8 @@ from cryptography.fernet import Fernet
 
 class RegisterUser:
     def __init__(self, login: str, password: str):
-        self._login = login
-        self._password = password
+        self._input_login = login
+        self._input_password = password
         self._key = open('src/data/fernet_key.txt', 'rb').readline()
         self._Fernet = Fernet(self._key)
 
@@ -17,13 +17,12 @@ class RegisterUser:
         try:
             with open('src/data/users/users.txt', 'r') as file:
                 for line in file:
+                    if not line.strip():
+                        continue
                     line = line.split(',')
-                    _login = bytes(line[0], encoding='utf-8')
-                    _login = self._Fernet.decrypt(_login)
-                    _password = self._Fernet.decrypt(bytes(line[1], encoding='utf-8'))
-                    self._login = bytes(self._login, encoding='utf-8')
-                    self._password = bytes(self._password, encoding='utf-8')
-                    if f'{_login},{_password}' == f'{self._login},{self._password}':
+                    _file_login = self._Fernet.decrypt(bytes(line[0], encoding='utf-8'))
+                    _input_login = bytes(self._input_login, encoding='utf-8')
+                    if _file_login == _input_login:
                         return True
             return False
 
@@ -35,6 +34,6 @@ class RegisterUser:
         Add users credentials to file.
         """
         with open('src/data/users/users.txt', 'a') as file:
-            _login_with_Fernet = self._Fernet.encrypt(bytes(self._login, encoding='utf8'))
-            _password_with_Fernet = self._Fernet.encrypt(bytes(self._password, encoding='utf8'))
-            file.write(f'{_login_with_Fernet.decode("utf-8")},{_password_with_Fernet.decode("utf-8")}\n')
+            _login_with_Fernet = self._Fernet.encrypt(bytes(self._input_login, encoding='utf-8')).decode('utf-8')
+            _password_with_Fernet = self._Fernet.encrypt(bytes(self._input_password, encoding='utf-8')).decode('utf-8')
+            file.write(f'{_login_with_Fernet},{_password_with_Fernet}\n')

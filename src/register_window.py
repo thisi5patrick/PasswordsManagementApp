@@ -70,7 +70,8 @@ class RegisterWindow(QWidget):
             else:
                 self.info_label.setText('User already exists')
                 self.info_label.setStyleSheet('color: red; font-size: 12px;')
-
+                self._new_password_input.clear()
+                self._new_password_repeat_input.clear()
         else:
             self.info_label.setText('Passwords does not match!')
             self.info_label.setStyleSheet('color: red; font-size: 12px;')
