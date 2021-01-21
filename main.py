@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from PyQt5.QtWidgets import QApplication
 import sys
-from src import MainWindow
+from src.windows import MainWindow
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

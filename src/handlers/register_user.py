@@ -29,11 +29,27 @@ class RegisterUser:
         except FileNotFoundError:
             return False
 
+    def getLoginHash(self) -> bytes:
+        """
+        Method to return user's hashed username.
+        :return:
+        """
+
+        return self._Fernet.encrypt(bytes(self._input_login, encoding='utf-8')).decode('utf-8')
+
+    def getPasswordHash(self) -> bytes:
+        """
+        Method to return user's hashed password
+        :return:
+        """
+
+        return self._Fernet.encrypt(bytes(self._input_password, encoding='utf-8')).decode('utf-8')
+
     def addUserToFile(self) -> None:
         """
         Add users credentials to file.
         """
         with open('src/data/users/users.txt', 'a') as file:
-            _login_with_Fernet = self._Fernet.encrypt(bytes(self._input_login, encoding='utf-8')).decode('utf-8')
-            _password_with_Fernet = self._Fernet.encrypt(bytes(self._input_password, encoding='utf-8')).decode('utf-8')
+            _login_with_Fernet = self.getLoginHash()
+            _password_with_Fernet = self.getPasswordHash()
             file.write(f'{_login_with_Fernet},{_password_with_Fernet}\n')
