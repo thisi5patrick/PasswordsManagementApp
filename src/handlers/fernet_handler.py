@@ -4,8 +4,19 @@ from cryptography.fernet import Fernet
 
 
 class FernetKeyHandler:
-    def __call__(self):
-        return self.generateFernetKey()
+    def __init__(self, _login = None, _password = None):
+        self._key = open('src/data/fernet_key.txt', 'rb').readline()
+        self._Fernet = Fernet(self._key)
+        self._login = _login
+        self._password = _password
+
+    def getFernetKey(self) -> bytes:
+        """
+        Return Fernet object to decrypt and encrypt texts
+        :return:
+        """
+
+        return self._Fernet
 
     @staticmethod
     def generateKey() -> bytes:
@@ -40,3 +51,19 @@ class FernetKeyHandler:
                 self.writeKeyToFile(f, key)
 
         return key
+
+    def getPasswordHash(self) -> bytes:
+        """
+        Method to return user's hashed password
+        :return: hashed password
+        """
+
+        return self._Fernet.encrypt(bytes(self._password, encoding='utf-8')).decode('utf-8')
+
+    def getLoginHash(self) -> bytes:
+        """
+        Method to return user's hashed username.
+        :return: hashed username
+        """
+
+        return self._Fernet.encrypt(bytes(self._login, encoding='utf-8')).decode('utf-8')

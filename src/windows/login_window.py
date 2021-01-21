@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-from PyQt5.QtWidgets import QLineEdit, QLabel, QFormLayout, QPushButton, QWidget
+from PyQt5.QtWidgets import QLineEdit, QLabel, QFormLayout, QPushButton, QWidget, QStackedWidget
 
 from src.handlers import FernetKeyHandler
 from src.windows.logged_user_window import LogedUserWindow
 
 
 class LoginWindow(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent, logged_user_window):
         super(LoginWindow, self).__init__(parent)
         fernet_key_handler = FernetKeyHandler()
-        self._key = fernet_key_handler()
+        self.logged_user_window = logged_user_window
+        self._key = fernet_key_handler.generateFernetKey()
         self.parent = parent
         self.setStyleSheet('''
             QLabel { font-size: 12px; margin-top: 40px }
@@ -39,17 +40,15 @@ class LoginWindow(QWidget):
         self.layout.addWidget(self.password_input)
         self.layout.addWidget(self.login_button)
         self.layout.addWidget(self.register_button)
-
         self.setLayout(self.layout)
 
     def checkCredentials(self):
         """
         Function to check entered credentials
         """
-        for i in reversed(range(self.layout.count())):
-            self.layout.itemAt(i).widget().setParent(None)
-
-        LogedUserWindow(self)
+        # TODO Check user cerdentials
+        self.parent.stacked_widget.setCurrentIndex(self.parent.stacked_widget.currentIndex() + 2)
+        self.logged_user_window.initUI(self.login_input.text())
 
     def registerUser(self):
         """

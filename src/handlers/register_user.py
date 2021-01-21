@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from cryptography.fernet import Fernet
+from .fernet_handler import FernetKeyHandler
 
 
 class RegisterUser:
     def __init__(self, login: str, password: str):
         self._input_login = login
         self._input_password = password
-        self._key = open('src/data/fernet_key.txt', 'rb').readline()
-        self._Fernet = Fernet(self._key)
+        self.Fernet_handler = FernetKeyHandler(self._input_login, self._input_password)
+        self._key = self.Fernet_handler.getFernetKey()
 
     def checkUserExistence(self) -> bool:
         """
@@ -20,7 +20,7 @@ class RegisterUser:
                     if not line.strip():
                         continue
                     line = line.split(',')
-                    _file_login = self._Fernet.decrypt(bytes(line[0], encoding='utf-8'))
+                    _file_login = self._key.decrypt(bytes(line[0], encoding='utf-8'))
                     _input_login = bytes(self._input_login, encoding='utf-8')
                     if _file_login == _input_login:
                         return True
@@ -29,27 +29,11 @@ class RegisterUser:
         except FileNotFoundError:
             return False
 
-    def getLoginHash(self) -> bytes:
-        """
-        Method to return user's hashed username.
-        :return:
-        """
-
-        return self._Fernet.encrypt(bytes(self._input_login, encoding='utf-8')).decode('utf-8')
-
-    def getPasswordHash(self) -> bytes:
-        """
-        Method to return user's hashed password
-        :return:
-        """
-
-        return self._Fernet.encrypt(bytes(self._input_password, encoding='utf-8')).decode('utf-8')
-
     def addUserToFile(self) -> None:
         """
         Add users credentials to file.
         """
         with open('src/data/users/users.txt', 'a') as file:
-            _login_with_Fernet = self.getLoginHash()
-            _password_with_Fernet = self.getPasswordHash()
+            _login_with_Fernet = self.Fernet_handler.getLoginHash()
+            _password_with_Fernet = self.Fernet_handler.getPasswordHash()
             file.write(f'{_login_with_Fernet},{_password_with_Fernet}\n')

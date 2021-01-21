@@ -3,7 +3,7 @@ from __future__ import annotations
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QFormLayout, QPushButton
 from PyQt5.QtGui import QValidator
 
-from src.handlers import RegisterUser
+from src.handlers import RegisterUser, FernetKeyHandler
 
 
 class RegisterWindow(QWidget):
@@ -68,11 +68,12 @@ class RegisterWindow(QWidget):
         """
         self._password = self._new_password_input.text()
         self._login = self._new_login_input.text()
+        fernet_handler = FernetKeyHandler(self._login, self._password)
         if self.validatePassword():
             ru = RegisterUser(self._login, self._password)
             if not ru.checkUserExistence():
                 ru.addUserToFile()
-                _hashed_login = ru.getLoginHash()
+                _hashed_login = fernet_handler.getLoginHash()
                 self._new_login_input.clear()
                 self._new_password_input.clear()
                 self._new_password_repeat_input.clear()
