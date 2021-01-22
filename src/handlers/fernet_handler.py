@@ -5,7 +5,8 @@ from cryptography.fernet import Fernet
 
 class FernetKeyHandler:
     def __init__(self, _login = None, _password = None):
-        self._key = open('src/data/fernet_key.txt', 'rb').readline()
+        with open('src/data/fernet_key.txt', 'rb') as f:
+            self._key = f.readline()
         self._Fernet = Fernet(self._key)
         self._login = _login
         self._password = _password
@@ -65,5 +66,8 @@ class FernetKeyHandler:
         Method to return user's hashed username.
         :return: hashed username
         """
-
         return self._Fernet.encrypt(bytes(self._login, encoding='utf-8')).decode('utf-8')
+
+    @property
+    def Fernet(self):
+        return self._Fernet

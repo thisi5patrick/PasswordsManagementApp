@@ -10,7 +10,7 @@ class RegisterUser:
         self.Fernet_handler = FernetKeyHandler(self._input_login, self._input_password)
         self._key = self.Fernet_handler.getFernetKey()
 
-    def checkUserExistence(self) -> bool:
+    def userExists(self) -> bool:
         """
         Check if user exists in file with users.
         """

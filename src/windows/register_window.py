@@ -70,9 +70,9 @@ class RegisterWindow(QWidget):
         self._login = self._new_login_input.text()
         fernet_handler = FernetKeyHandler(self._login, self._password)
         if self.validatePassword():
-            ru = RegisterUser(self._login, self._password)
-            if not ru.checkUserExistence():
-                ru.addUserToFile()
+            register_user_handler = RegisterUser(self._login, self._password)
+            if not register_user_handler.userExists():
+                register_user_handler.addUserToFile()
                 _hashed_login = fernet_handler.getLoginHash()
                 self._new_login_input.clear()
                 self._new_password_input.clear()
