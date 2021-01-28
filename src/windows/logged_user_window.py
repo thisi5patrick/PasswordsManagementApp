@@ -1,8 +1,71 @@
 from __future__ import annotations
 
-from PyQt5.QtWidgets import QLabel, QFormLayout, QPushButton, QWidget, QLineEdit, QVBoxLayout, QListWidget, \
-    QListWidgetItem, QHBoxLayout, QLayout
+import re
+
+from PyQt5.QtWidgets import QLabel, QFormLayout, QPushButton, QWidget, QLineEdit, QListWidget, \
+    QListWidgetItem, QGridLayout, QAbstractItemView
 from src.handlers import FernetKeyHandler, LoggedInUser
+
+
+class LayerWidget(QWidget):
+    def __init__(self, layer, parent):
+        super(LayerWidget, self).__init__()
+        self.user_handler = parent
+        self.website_label = QLabel()
+        self.login_label = QLabel()
+        self.password_label = QLabel()
+        self.login_text = None
+        self.password_text = None
+        self.asterisk_password = None
+
+        layout = QGridLayout()
+        layout.addWidget(QLabel('Website'), 0, 0)
+        layout.addWidget(QLabel('Login'), 1, 0)
+        layout.addWidget(QLabel('Password'), 2, 0)
+        layout.addWidget(self.website_label, 0, 1, 1, 3)
+        layout.addWidget(self.login_label, 1, 1, 1, 3)
+        layout.addWidget(self.password_label, 2, 1, 1, 3)
+
+        self._layer = None
+        self.layer = layer
+
+        delete_account_button = QPushButton('Delete')
+        delete_account_button.clicked.connect(lambda state, arg=self.login_text: self.deleteAccount(arg))
+        delete_account_button.setStyleSheet('''
+            QPushButton { font-size: 12px;}
+        ''')
+
+        self.show_password_button = QPushButton('Show')
+        self.show_password_button.clicked.connect(lambda state: self.showPassword())
+        self.show_password_button.setStyleSheet('''
+            QPushButton { font-size: 12px;}
+        ''')
+        layout.addWidget(self.show_password_button, 2, 5)
+        layout.addWidget(delete_account_button, 0, 5, 2, 1)
+        self.setLayout(layout)
+
+    @property
+    def layer(self):
+        return self._layer
+
+    @layer.setter
+    def layer(self, value):
+        self._layer = value
+        self.asterisk_password = re.sub('.', '*', value.get('password'))
+        self.password_label.setText(self.asterisk_password)
+        self.website_label.setText(value.get('website'))
+        self.password_text = value.get('password')
+        self.login_label.setText(value.get('login'))
+        self.login_text = value.get('login')
+
+    def deleteAccount(self, login: str):
+        self.user_handler.deleteAccountFromFile(login)
+
+    def showPassword(self):
+        """
+        Change password from '*' to string
+        """
+        self.password_label.setText(self.password_text)
 
 
 class LogedUserWindow(QWidget):
@@ -16,7 +79,7 @@ class LogedUserWindow(QWidget):
 
     def initUI(self, _login: str):
         """
-        Method to init the UI of user
+        Init the UI of user
         """
         self.user_handler = LoggedInUser(_login)
         _accounts = self.user_handler.getSavedAccounts()
@@ -45,21 +108,10 @@ class LogedUserWindow(QWidget):
         self.info_label = QLabel()
 
         listWidget = QListWidget()
-        # listWidget.setSizeConstraint(QLayout.SetFixedSize)
-        main_layout = QHBoxLayout()
-        main_layout.addWidget(listWidget)
+        listWidget.setVerticalScrollMode(QAbstractItemView.ScrollPerPixel)
 
-        # TODO display registered accounts - not working
         for account in _accounts.values():
-            website = QLabel(account[0][0])
-            login = QLabel(account[0][1])
-            password = QLabel(account[0][2])
-
-            widget = QWidget()
-            widget.addWidget(website)
-            widget.addWidget(login)
-            widget.addWidget(password)
-
+            widget = LayerWidget(layer=account, parent=self.user_handler)
             item = QListWidgetItem()
             listWidget.insertItem(listWidget.count(), item)
             listWidget.setItemWidget(item, widget)
