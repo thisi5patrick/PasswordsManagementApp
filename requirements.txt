@@ -1,2 +1,2 @@
 pyqt5
-cryptography
+cryptography==3.4.4

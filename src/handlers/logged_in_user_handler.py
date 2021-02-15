@@ -3,6 +3,9 @@ from typing import Union
 
 from .fernet_handler import FernetKeyHandler
 import os
+from os.path import dirname, join
+
+scriptdir = dirname(__file__)
 
 
 class LoggedInUser:
@@ -86,10 +89,10 @@ class LoggedInUser:
         Get file object
         :return: file object
         """
-        for file in os.listdir('src/data/passwords/'):
+        for file in os.listdir(join(scriptdir, '..', 'data', 'passwords')):
             bytes_file = bytes(file, encoding='utf-8')
             if self.Fernet_handler.Fernet.decrypt(bytes_file) == bytes(self._login, encoding='utf-8'):
-                return open(f'src/data/passwords/{file}', 'r+')
+                return open(join(scriptdir, '..', 'data', 'passwords', file), 'r+')
 
     def getUserHash(self):
         """

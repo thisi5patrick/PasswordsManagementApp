@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout
 from src.windows.logged_user_window import LogedUserWindow
 from src.windows.login_window import LoginWindow
 from src.windows.register_window import RegisterWindow
+from src.handlers import FoldersHandler
 
 
 class MainWindow(QWidget):
@@ -12,6 +13,9 @@ class MainWindow(QWidget):
         super(MainWindow, self).__init__(parent)
         self.setWindowTitle('Password Manager')
         self.setGeometry(500, 200, 400, 500)
+
+        file_handler = FoldersHandler()
+        file_handler.createFolders()
 
         main_layout = QVBoxLayout()
 

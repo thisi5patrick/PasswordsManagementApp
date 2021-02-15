@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from .fernet_handler import FernetKeyHandler
+from os.path import dirname, join
+
+scriptdir = dirname(__file__)
 
 
-class RegisterUser:
+class RegisterUserHandler:
     def __init__(self, login: str, password: str):
         self._input_login = login
         self._input_password = password
@@ -15,7 +18,7 @@ class RegisterUser:
         Check if user exists in file with users.
         """
         try:
-            with open('src/data/users/users.txt', 'r') as file:
+            with open(join(scriptdir, '..', 'data/users/users.txt'), 'r') as file:
                 for line in file:
                     if not line.strip():
                         continue
@@ -33,7 +36,7 @@ class RegisterUser:
         """
         Add users credentials to file.
         """
-        with open('src/data/users/users.txt', 'a') as file:
+        with open(join(scriptdir, '..', 'data/users/users.txt'), 'a') as file:
             _login_with_Fernet = self.Fernet_handler.getLoginHash()
             _password_with_Fernet = self.Fernet_handler.getPasswordHash()
             file.write(f'{_login_with_Fernet},{_password_with_Fernet}\n')
