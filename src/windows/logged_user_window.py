@@ -4,7 +4,7 @@ import re
 
 from PyQt5.QtWidgets import QLabel, QFormLayout, QPushButton, QWidget, QLineEdit, QListWidget, \
     QListWidgetItem, QGridLayout, QAbstractItemView
-from src.handlers import FernetKeyHandler, LoggedInUser
+from src.handlers import FernetKeyHandler, LoggedInUserHandler
 
 
 class LayerWidget(QWidget):
@@ -81,7 +81,7 @@ class LogedUserWindow(QWidget):
         """
         Init the UI of user
         """
-        self.user_handler = LoggedInUser(_login)
+        self.user_handler = LoggedInUserHandler(_login)
         _accounts = self.user_handler.getSavedAccounts()
         self.welcome_message = QLabel(f'Welcome back {_login}')
         self.welcome_message.setStyleSheet('''

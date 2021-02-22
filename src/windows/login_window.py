@@ -9,9 +9,8 @@ from src.windows.logged_user_window import LogedUserWindow
 class LoginWindow(QWidget):
     def __init__(self, parent, logged_user_window):
         super(LoginWindow, self).__init__(parent)
-        fernet_key_handler = FernetKeyHandler()
+        FernetKeyHandler()
         self.logged_user_window = logged_user_window
-        self._key = fernet_key_handler.generateFernetKey()
         self.parent = parent
         self.setStyleSheet('''
             QLabel { font-size: 12px; margin-top: 40px }

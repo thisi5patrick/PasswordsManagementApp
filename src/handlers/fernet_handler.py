@@ -7,13 +7,14 @@ scriptdir = dirname(__file__)
 
 
 class FernetKeyHandler:
-    def __init__(self, _login=None, _password=None):
+    def __init__(self, _login: str = None, _password: str = None):
         try:
             with open(join(scriptdir, '..', 'data', 'fernet_key.txt'), 'rb') as f:
                 self._key = f.readline()
                 self._Fernet = Fernet(self._key)
         except FileNotFoundError:
-            pass
+            self._key = self.generateFernetKey()
+            self._Fernet = Fernet(self._key)
         self._login = _login
         self._password = _password
 

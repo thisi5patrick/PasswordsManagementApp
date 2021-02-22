@@ -8,9 +8,9 @@ from os.path import dirname, join
 scriptdir = dirname(__file__)
 
 
-class LoggedInUser:
+class LoggedInUserHandler:
     def __init__(self, _login):
-        super(LoggedInUser, self).__init__()
+        super(LoggedInUserHandler, self).__init__()
         self._login = _login
         self.Fernet_handler = FernetKeyHandler(self._login)
         self.file = self.getFile()
@@ -18,7 +18,7 @@ class LoggedInUser:
     @staticmethod
     def toString(items_to_convert: Union[bytes, list]) -> Union[str, list]:
         """
-        Method to convert bytes or list to string
+        Method to convert bytes or list of bytes to strings
         :param items_to_convert: bytes or list of bytes
         :return: converted bytes or list to string
         """
@@ -26,8 +26,7 @@ class LoggedInUser:
             return_value = items_to_convert.decode('utf-8')
         else:
             return_value = []
-            items = list(*items_to_convert)
-            for item in items:
+            for item in items_to_convert:
                 return_value.append(item.decode('utf-8'))
         return return_value
 
@@ -90,8 +89,8 @@ class LoggedInUser:
         :return: file object
         """
         for file in os.listdir(join(scriptdir, '..', 'data', 'passwords')):
-            bytes_file = bytes(file, encoding='utf-8')
-            if self.Fernet_handler.Fernet.decrypt(bytes_file) == bytes(self._login, encoding='utf-8'):
+            bytes_file = self.toBytes(file)
+            if self.Fernet_handler.Fernet.decrypt(bytes_file) == self.toBytes(self._login):
                 return open(join(scriptdir, '..', 'data', 'passwords', file), 'r+')
 
     def getUserHash(self):
@@ -110,7 +109,7 @@ class LoggedInUser:
         """
         hashed_items = []
         for item in values:
-            hashed_items.append(self.Fernet_handler.Fernet.encrypt(bytes(item, encoding='utf-8')))
+            hashed_items.append(self.Fernet_handler.Fernet.encrypt(self.toBytes(item)))
 
         return hashed_items
 

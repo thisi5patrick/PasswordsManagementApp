@@ -78,7 +78,7 @@ class RegisterWindow(QWidget):
                 self._new_password_input.clear()
                 self._new_password_repeat_input.clear()
                 self.parent.stacked_widget.setCurrentIndex(self.parent.stacked_widget.currentIndex() - 1)
-                self.createFileForPasswords(_hashed_login)
+                register_user_handler.createFileForPasswords(_hashed_login)
             else:
                 self.info_label.setText('User already exists')
                 self.info_label.setStyleSheet('color: red; font-size: 12px;')
@@ -87,14 +87,3 @@ class RegisterWindow(QWidget):
         else:
             self.info_label.setText('Passwords does not match!')
             self.info_label.setStyleSheet('color: red; font-size: 12px;')
-
-    @staticmethod
-    def createFileForPasswords(login_hash: bytes):
-        """
-        Method to create file, to store the saved keys of user.
-        :param login_hash: hashed login using Fernet Key
-        """
-        try:
-            open(f'src/data/passwords/{login_hash}.txt', 'w')
-        except FileExistsError:
-            pass

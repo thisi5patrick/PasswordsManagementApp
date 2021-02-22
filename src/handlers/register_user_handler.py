@@ -18,7 +18,7 @@ class RegisterUserHandler:
         Check if user exists in file with users.
         """
         try:
-            with open(join(scriptdir, '..', 'data/users/users.txt'), 'r') as file:
+            with open(join(scriptdir, '..', 'data', 'users', 'users.txt'), 'r') as file:
                 for line in file:
                     if not line.strip():
                         continue
@@ -36,7 +36,18 @@ class RegisterUserHandler:
         """
         Add users credentials to file.
         """
-        with open(join(scriptdir, '..', 'data/users/users.txt'), 'a') as file:
+        with open(join(scriptdir, '..', 'data', 'users', 'users.txt'), 'a') as file:
             _login_with_Fernet = self.Fernet_handler.getLoginHash()
             _password_with_Fernet = self.Fernet_handler.getPasswordHash()
             file.write(f'{_login_with_Fernet},{_password_with_Fernet}\n')
+
+    @staticmethod
+    def createFileForPasswords(login_hash: bytes):
+        """
+        Method to create file, to store the saved keys of user.
+        :param login_hash: hashed login using Fernet Key
+        """
+        try:
+            open(join(scriptdir, '..', 'data', 'passwords', f'{login_hash}.txt'), 'w')
+        except FileExistsError:
+            pass
