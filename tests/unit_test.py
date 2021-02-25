@@ -1,7 +1,8 @@
+import glob
+import os
 import unittest
 from os.path import exists, join, dirname
 import shutil
-import re
 
 from src.handlers import FoldersHandler, RegisterUserHandler, FernetKeyHandler, LoggedInUserHandler
 
@@ -64,7 +65,7 @@ class LoggedUserTest(unittest.TestCase):
 
     def testNoneExistentUser(self):
         wrong_user_handler = LoggedInUserHandler('NonExistentUser')
-        self.assertIs(wrong_user_handler.file, None)
+        self.assertIs(wrong_user_handler.getFile(), None)
 
     def testHashString(self):
         self.assertIsInstance(self.user_handler.hashStrings('value1'), list)
@@ -91,12 +92,24 @@ class LoggedUserTest(unittest.TestCase):
         self.assertIsInstance(self.user_handler.toString(b'test'), str)
         self.assertIsInstance(self.user_handler.toString([b'test', b'test2'])[0], str)
 
-    # TODO add test
     def testDeleteAccountFromFile(self):
-        ...
+        with self.user_handler.getFile() as file:
+            lines_before = file.read().split('\n')
+        self.user_handler.writeAccountToFile(['website', 'login', 'password'])
+        with self.user_handler.getFile() as file:
+            lines_after = file.read().split('\n')
+        self.assertNotEqual(lines_before, lines_after)
+
+        self.user_handler.deleteAccountFromFile('login')
+
+        with self.user_handler.getFile() as file:
+            lines_after_deletion = file.read().split('\n')
+        self.assertEqual(lines_before, lines_after_deletion)
 
     def doCleanups(self) -> None:
-        shutil.rmtree(join(scriptdir, '..', 'src', 'data', 'passwords'), ignore_errors=True)
+        files = glob.glob(join(scriptdir, '..', 'src', 'data', 'passwords', '*'))
+        for file in files:
+            os.remove(file)
 
 
 if __name__ == '__main__':

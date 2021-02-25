@@ -149,11 +149,9 @@ class LogedUserWindow(QWidget):
             self.info_label.setText('All inputs must be filled.')
             self.info_label.setStyleSheet('color: red; font-size: 12px;')
             return
-        list_of_hashed_items = self.user_handler.hashStrings(self.website_input.text(),
-                                                             self.login_input.text(),
-                                                             self.password_input.text())
 
-        list_of_hashed_items = self.toStrings(list_of_hashed_items)
-        self.user_handler.writeAccountToFile(list_of_hashed_items)
+        self.user_handler.writeAccountToFile([self.website_input.text(),
+                                              self.login_input.text(),
+                                              self.password_input.text()])
         self.info_label.setText('Account succesfully saved.')
         self.info_label.setStyleSheet('font-size: 12px;')

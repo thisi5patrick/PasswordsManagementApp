@@ -13,7 +13,6 @@ class LoggedInUserHandler:
         super(LoggedInUserHandler, self).__init__()
         self._login = _login
         self.Fernet_handler = FernetKeyHandler(self._login)
-        self.file = self.getFile()
 
     @staticmethod
     def toString(items_to_convert: Union[bytes, list]) -> Union[str, list]:
@@ -113,11 +112,15 @@ class LoggedInUserHandler:
 
         return hashed_items
 
-    def writeAccountToFile(self, list_of_items: list):
+    def writeAccountToFile(self, items: list):
         """
-        Write account data to file
-        :param list_of_items: list of items to write to file
+        Encrypt and write account data to file
+        :param items: list of items to write to file
         """
+        items[0] = self.toString(self.Fernet_handler.Fernet.encrypt(self.toBytes(items[0])))
+        items[1] = self.toString(self.Fernet_handler.Fernet.encrypt(self.toBytes(items[1])))
+        items[2] = self.toString(self.Fernet_handler.Fernet.encrypt(self.toBytes(items[2])))
+
         with self.getFile() as file:
             file.read()
-            file.write(f'{list_of_items[0]},{list_of_items[1]},{list_of_items[2]}\n')
+            file.write(f'{items[0]},{items[1]},{items[2]}\n')
